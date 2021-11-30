@@ -11,7 +11,7 @@ from contextlib import contextmanager
 def highlight_print(
     username=None, message=None, priority=None, level=None, logger=None
 ):
-    """ Print headers in a highlighted style """
+    """Print headers in a highlighted style"""
     # can add other highlighters at other priorities enriching this function
 
     # find the number of chars needed off the length of the logger message
@@ -83,6 +83,7 @@ def highlight_print(
     if lower_char and (show_logs or priority == "workspace"):
         print("{}".format(lower_char * int(ceil(output_len / len(lower_char)))))
 
+
 @contextmanager
 def smart_run(session):
     try:
@@ -93,45 +94,54 @@ def smart_run(session):
     finally:
         session.session_quit()
 
+
 def random_sleep(random_time):
     action_time = random.randint(random_time[0], random_time[1])
     time.sleep(action_time)
     return action_time
 
+
 def load_cookie(url, browser, username, logger):
-    cookie_file_path = f'assets/cookies/{username}.pkl'
+    cookie_file_path = f"assets/cookies/{username}.pkl"
     try:
-        logger.info(f'Loading cookie file {cookie_file_path}')
+        logger.info(f"Loading cookie file {cookie_file_path}")
         cookies = pickle.load(open(cookie_file_path, "rb"))
         browser.delete_all_cookies()
         # have to be on a page before you can add any cookies, any page - does not matter which
         browser.get("https://google.com" if url is None else url)
 
         for cookie in cookies:
-            if isinstance(cookie.get('expiry'), float): #Checks if the instance expiry a float 
-                cookie['expiry'] = int(cookie['expiry']) # it converts expiry cookie to a int 
+            if isinstance(
+                cookie.get("expiry"), float
+            ):  # Checks if the instance expiry a float
+                cookie["expiry"] = int(
+                    cookie["expiry"]
+                )  # it converts expiry cookie to a int
             browser.add_cookie(cookie)
         return True
     except IOError:
-        logger.info(f'Not find cookie file at {cookie_file_path}')
+        logger.info(f"Not find cookie file at {cookie_file_path}")
         return False
 
+
 def save_cookie(browser, username, logger):
-    cookie_file_path = f'assets/cookies/{username}.pkl'
-    pickle.dump(browser.get_cookies() , open(cookie_file_path,"wb"))
-    logger.info(f'Saved cookie file at {cookie_file_path}')
+    cookie_file_path = f"assets/cookies/{username}.pkl"
+    pickle.dump(browser.get_cookies(), open(cookie_file_path, "wb"))
+    logger.info(f"Saved cookie file at {cookie_file_path}")
+
 
 def check_and_create_file(file_path):
     if not os.path.exists(os.path.dirname(file_path)):
         try:
             os.makedirs(os.path.dirname(file_path))
-        except OSError as exc: # Guard against race condition
+        except OSError as exc:  # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
     if os.path.isfile(file_path) is not True:
         f = open(file_path, "w")
-    
+
+
 def save_excel(df, file_path, logger=None, message=None):
-    df.to_excel(file_path, engine='openpyxl', index=False)
+    df.to_excel(file_path, engine="openpyxl", index=False)
     if message and logger:
         logger.info(message)

@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options as Firefox_Options
 from .utils import check_and_create_file
 
+
 def set_selenium_session(
     proxy_address,
     proxy_port,
@@ -17,7 +18,7 @@ def set_selenium_session(
     logfolder,
     logger,
     geckodriver_log_level,
-    user_agent
+    user_agent,
 ):
     """Starts local session for a selenium server.
     Default case scenario."""
@@ -72,14 +73,13 @@ def set_selenium_session(
     # geckodriver log in specific user logfolder
     geckodriver_log = "{}geckodriver.log".format(logfolder)
     check_and_create_file(geckodriver_log)
-    
+
     browser = webdriver.Firefox(
         firefox_profile=firefox_profile,
         executable_path=geckodriver_path,
         log_path=geckodriver_log,
         options=firefox_options,
     )
-
 
     # authenticate with popup alert window
     if proxy_username and proxy_password:
@@ -92,8 +92,9 @@ def set_selenium_session(
 
     return browser
 
+
 def proxy_authentication(browser, logger, proxy_username, proxy_password):
-    """ Authenticate proxy using popup alert window """
+    """Authenticate proxy using popup alert window"""
 
     # FIXME: https://github.com/SeleniumHQ/selenium/issues/7239
     # this feauture is not working anymore due to the Selenium bug report above
